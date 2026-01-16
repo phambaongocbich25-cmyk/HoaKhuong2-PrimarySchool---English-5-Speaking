@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English 5 Speaking - Star Students</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&family=Grandview&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #A29BFE;
+            --accent: #00B894;
+            --error: #FF7675; /* Màu cam san hô cho từ cần sửa */
+            --bg: #F9FAFC;
+            --gold: #FDCB6E;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 20px;
+            color: #2D3436;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(108, 92, 231, 0.1);
+            border: 1px solid #EFEFEF;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.8rem;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        /* Mode Switcher */
+        .mode-box {
+            display: flex;
+            background: #F1F2F6;
+            padding: 6px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            transition: 0.3s;
+            color: #636E72;
+        }
+        .mode-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .input-group {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;
+        }
+        input, select, textarea {
+            padding: 15px; border-radius: 18px; border: 2px solid #E1E8EE;
+            font-size: 16px; font-family: inherit; outline: none;
+        }
+
+        .practice-card {
+            background: #F8F9FF;
+            padding: 25px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #EDF0F7;
+        }
+
+        .sample-area {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            border-left: 5px solid var(--accent);
+            color: #444;
+        }
+
+        .btn-record {
+            background: var(--primary);
+            color: white; border: none;
+            padding: 20px; border-radius: 50px;
+            width: 100%; font-size: 1.3rem; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+        }
+        .btn-record:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(108, 92, 231, 0.3); }
+
+        .btn-listen {
+            background: white; color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px; border-radius: 50px;
+            margin-bottom: 10px; cursor: pointer; font-weight: bold;
+        }
+
+        /* Feedback UI */
+        .feedback-display {
+            margin-top: 25px; padding: 25px;
+            border-radius: 20px; background: #fff;
+            border: 2px dashed #D1D8E0;
+        }
+        .word-correct { color: var(--accent); font-weight: bold; }
+        .word-fix { color: var(--error); text-decoration: underline; font-weight: bold; cursor: pointer; }
+
+        /* Certificate Design */
+        #cert {
+            display: none; margin-top: 50px; padding: 60px;
+            background: #FFFDF5;
+            border: 15px solid #FDCB6E;
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cg fill='none' stroke='%23FDCB6E' stroke-width='2'%3E%3Crect width='100' height='100'/%3E%3C/g%3E%3C/svg%3E") 30;
+            border-radius: 10px; text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+        .cert-title { font-size: 3.5rem; color: #B8860B; margin: 0; font-family: 'serif'; }
+        .cert-name { font-size: 3rem; color: #2D3436; margin: 20px 0; border-bottom: 3px solid #636E72; display: inline-block; }
+        .stars { font-size: 4rem; margin: 20px 0; }
+        .teacher-box { display: flex; justify-content: space-around; margin-top: 70px; }
+        .sig { border-top: 1px solid #636E72; width: 200px; padding-top: 10px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <h1>🎙️ Speaking Mastery</h1>
+
+    <div class="mode-box">
+        <button id="mUnit" class="mode-btn active" onclick="setMode('unit')">Unit Practice</button>
+        <button id="mFree" class="mode-btn" onclick="setMode('free')">Free Speaking</button>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="stuName" placeholder="Student's Name...">
+        <input type="text" id="stuClass" placeholder="Class (e.g. 5/1)">
+    </div>
+
+    <div id="unitCard" class="practice-card">
+        <label><b>Select Lesson:</b></label>
+        <select id="unitSelect" onchange="loadLesson()" style="margin-top:10px; width: 100%;"></select>
+        <div class="sample-area" id="sampleTxt"></div>
+        <button class="btn-listen" onclick="speak(document.getElementById('sampleTxt').innerText)">🔊 Listen to Teacher</button>
+    </div>
+
+    <div id="freeCard" class="practice-card" style="display:none">
+        <div class="sample-area">Speak anything you like! I will listen and help you say it perfectly. 🌟</div>
+    </div>
+
+    <div class="practice-card">
+        <textarea id="output" rows="3" placeholder="Your voice will appear here..."></textarea>
+        <button class="btn-record" id="recBtn" onclick="toggleRec()">🎙️ START SPEAKING</button>
+    </div>
+
+    <div class="feedback-display" id="feedback">
+        <h3 style="margin-top:0; color:var(--primary)">🤖 Teacher's Feedback</h3>
+        <div id="fbContent">Ready to help you!</div>
+    </div>
+
+    <div id="cert">
+        <div class="cert-title">CERTIFICATE</div>
+        <p style="font-size: 1.2rem; letter-spacing: 5px;">OF ACHIEVEMENT</p>
+        <p>This award is presented to</p>
+        <div class="cert-name" id="cName">Super Star</div>
+        <p style="font-size: 1.2rem;">Class: <span id="cClass">5/1</span></p>
+        <p>For successfully completing</p>
+        <h2 id="cUnit" style="color: #D4AF37;">UNIT 1</h2>
+        <div class="stars" id="cStars">⭐⭐⭐⭐⭐</div>
+        <div class="teacher-box">
+            <div>
+                <div class="sig">Mrs Tran Thi Kim Yen</div>
+                <small>Teacher</small>
+            </div>
+            <div>
+                <div class="sig">Mrs Pham Thi Ngoc Bich</div>
+                <small>Teacher</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const lessons = {
+    1: { t: "Unit 1: All about me!", s: "I’m Hoang. I’m in class 5/3. I live in the countryside. My favourite colour is yellow. My favourite animal is a dolphin. My favourite food is a sandwich. My favourite sport is table tennis." },
+    2: { t: "Unit 2: Our homes", s: "I live in a big house with my family. My address is 65 Le Loi Street. I love my home very much because it is very comfortable." },
+    3: { t: "Unit 3: My foreign friends", s: "I have many foreign friends. He is Vietnamese. She is from America. She is very friendly and clever. We like playing together." },
+    4: { t: "Unit 4: Our free-time activities", s: "In my free time, I like going for a walk and watering the flowers. At the weekend, I usually play the violin and surf the Internet." },
+    5: { t: "Unit 5: My future job", s: "In the future, I’d like to be a teacher because I love teaching children. My brother wants to be a firefighter to save people from fires." },
+    6: { t: "Unit 6: Our school rooms", s: "The art room is on the second floor. Go past the library and turn right. It is next to the computer room. Our school is very beautiful." },
+    7: { t: "Unit 7: Our favourite school activities", s: "My favourite school activity is doing projects with my friends. I also like reading books in the library because it is very interesting." },
+    8: { t: "Unit 8: In our classroom", s: "There are many things in our classroom. The crayons are on the table and the glue sticks are beside the books. This pencil sharpener is mine." },
+    9: { t: "Unit 9: Our outdoor activities", s: "We like playing outdoors. Last week, we went to the park. We danced around the campfire and watched the fish in the pond." },
+    10: { t: "Unit 10: Our school trip", s: "We had a wonderful school trip to Ba Na Hills last weekend. We visited many old buildings and took many beautiful photos with our teachers." }
+};
+
+let currentMode = 'unit';
+const select = document.getElementById('unitSelect');
+for(let i in lessons) select.innerHTML += `<option value="${i}">${lessons[i].t}</option>`;
+
+function setMode(m) {
+    currentMode = m;
+    document.getElementById('mUnit').classList.toggle('active', m === 'unit');
+    document.getElementById('mFree').classList.toggle('active', m === 'free');
+    document.getElementById('unitCard').style.display = m === 'unit' ? 'block' : 'none';
+    document.getElementById('freeCard').style.display = m === 'free' ? 'block' : 'none';
+    document.getElementById('cert').style.display = 'none';
+}
+
+function loadLesson() {
+    document.getElementById('sampleTxt').innerText = lessons[select.value].s;
+    document.getElementById('cert').style.display = 'none';
+}
+loadLesson();
+
+// Voice - British English Female
+function speak(text) {
+    window.speechSynthesis.cancel();
+    let msg = new SpeechSynthesisUtterance(text);
+    let voices = window.speechSynthesis.getVoices();
+    // Ưu tiên tìm giọng nữ người Anh
+    msg.voice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Female')) || voices.find(v => v.lang === 'en-GB');
+    msg.rate = 0.85; // Đọc chậm vừa phải cho học sinh
+    msg.pitch = 1.1; 
+    window.speechSynthesis.speak(msg);
+}
+
+// Recognition
+const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const rec = new Recognition();
+rec.lang = 'en-US';
+
+function toggleRec() {
+    rec.start();
+    document.getElementById('recBtn').innerText = "🔴 LISTENING...";
+}
+
+rec.onresult = (e) => {
+    const said = e.results[0][0].transcript;
+    document.getElementById('output').value = said;
+    document.getElementById('recBtn').innerText = "🎙️ START SPEAKING";
+    
+    if (currentMode === 'unit') analyzeUnit(said);
+    else analyzeFree(said);
+};
+
+function analyzeUnit(said) {
+    let sample = lessons[select.value].s.toLowerCase().replace(/[.,!]/g,"");
+    let input = said.toLowerCase().replace(/[.,!]/g,"");
+    let sArr = sample.split(" ");
+    let iArr = input.split(" ");
+    
+    let html = "";
+    let wrongCount = 0;
+    
+    sArr.forEach(word => {
+        if (iArr.includes(word)) {
+            html += `<span class="word-correct">${word}</span> `;
+        } else {
+            html += `<span class="word-fix" onclick="speak('${word}')">${word}</span> `;
+            wrongCount++;
+        }
+    });
+
+    document.getElementById('fbContent').innerHTML = `<p><b>Review:</b> (Click coral words to hear again)</p><p>${html}</p>`;
+    
+    // Chế độ chấm sao khích lệ: Chỉ cần đúng > 60% là cho 5 sao
+    let accuracy = ((sArr.length - wrongCount) / sArr.length) * 100;
+    let stars = 3;
+    if (accuracy > 80) stars = 5;
+    else if (accuracy > 60) stars = 4;
+    
+    if(wrongCount === 0) speak("Brilliant! Perfect 5 stars!");
+    else speak("Well done! Practice the coral words with me.");
+
+    showCert(stars, lessons[select.value].t);
+}
+
+function analyzeFree(said) {
+    document.getElementById('fbContent').innerHTML = `
+        <p><b>You said:</b></p>
+        <p style="font-size:1.2rem; color:var(--primary)">"${said}"</p>
+        <p><i>🌟 Listen to the perfect version of your sentence...</i></p>
+    `;
+    speak(said);
+    showCert(5, "Free Talk Master");
+}
+
+function showCert(stars, title) {
+    document.getElementById('cName').innerText = document.getElementById('stuName').value || "Smart Student";
+    document.getElementById('cClass').innerText = document.getElementById('stuClass').value || "5/1";
+    document.getElementById('cUnit').innerText = title;
+    document.getElementById('cStars').innerText = "⭐".repeat(stars);
+    document.getElementById('cert').style.display = 'block';
+    document.getElementById('cert').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Khởi động nạp giọng nói (Fix lỗi một số trình duyệt không nạp ngay)
+window.speechSynthesis.getVoices();
+</script>
+
+</body>
+</html>
